@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>表格</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="/assets/javascript/popup/popup.js"></script>
+    <script src="/assets/javascript/popup/orderpopup.js"></script>
+    <link rel="stylesheet" href="/assets/styles/search.css">
+    <link rel="stylesheet" type="text/css" href="/assets/styles/specific/order-detail.css"/>
+</head>
+<body style="overflow-x:hidden;background:#f3f3f3;">
+<div id="courseList">
+    <div id="mask_shadow"></div>
+    <div class="btn-div">
+        <button type="button" class="btn btn-primary" @click="refreshPage">刷新</button>
+        <button type="button" class="btn btn-primary" id="addCourse" @click="addCourse" data-toggle="modal" data-target="#courseModal" shiro:hasPermission="goods">新增课程</button>
+        <button type="button" class="btn btn-primary" id="first" @click="firstCourseList">大一年级</button>
+        <button type="button" class="btn btn-primary" id="second" @click="secondCourseList">大二年级</button>
+        <button type="button" class="btn btn-primary" id="third" @click="thirdCourseList">大三年级</button>
+        <button type="button" class="btn btn-primary" id="fourth" @click="fourthCourseList">大四年级</button>
+        <div class="search-box">
+            <form action="">
+                <select  v-model="selected">
+                    <option v-for="option in options3"  :value="option.value">
+                        {{ option.text }}
+                    </option>
+                </select>
+                <input placeholder="请输入……"  v-model.trim="searchInput3">
+                <button type="button" class="btn btn-success" @click="searchBtn3">搜索</button>
+            </form>
+        </div>
+    </div>
+    <div>
+        <table class="table table-condensed" style=" background-color: floralwhite;">
+            <thead>
+            <tr>
+                <th>年级</th>
+                <th>学院</th>
+                <th>专业</th>
+                <th>课程</th>
+                <th class="operation">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <template v-for="list in studentList.list" v-cloak>
+                <tr>
+                    <td>{{list.grade}}</td>
+                    <td>{{list.college}}</td>
+                    <td>{{list.major}}</td>
+                    <td>{{list.courses}}</td>
+                    <td class="operation">
+                        <!--@click="editCourses(list.courses)"-->
+                        <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#editCourseModal" @click="editCourseDetails(list.id)">修改</button>
+                        <button type="button" class="btn btn-danger btn-xs"  id="removeCourse" @click="removeCourse(list.id)" shiro:hasPermission="goods">删除</button>
+                    </td>
+                </tr>
+            </template>
+            </tbody>
+        </table>
+    </div>
+    <div class="footer-pager">
+        <!--解析显示分页信息-->
+        <!--分页文字信息-->
+        <span>共{{studentList.pages}}页，当前第{{studentList.pageNum}}页，总{{studentList.total}}条数据</span>
+        <!--分页条信息-->
+        <ul class="pagination">
+            <!--如果无上一页，不可点-->
+            <template v-if="studentList.hasPreviousPage==false">
+                <li><a href="#">&laquo;</a></li>
+            </template>
+            <!--如果有上一页，可点-->
+            <template v-if="studentList.hasPreviousPage==true">
+                <!--点前一页，跳到当前页码前一页-->
+                <li @click="to_page(studentList.pageNum-1)"><a href="#">&laquo;</a></li>
+            </template>
+
+            <!--遍历连续显示的页码-->
+            <template v-for="pagenum in studentList.navigatepageNums">
+                <!--如果是当前页码，高亮显示-->
+                <template v-if="pagenum==studentList.pageNum">
+                    <li class="active"><a href="#">{{pagenum}}</a></li>
+                </template>
+                <!--如果不是当前页码，正常显示-->
+                <template v-if="pagenum!=studentList.pageNum">
+                    <!--点击后把当前页码传送给axios-->
+                    <li class @click="to_page(pagenum)"><a href="#">{{pagenum}}</a></li>
+                </template>
+            </template>
+
+            <!--如果无下一页，不可点-->
+            <template v-if="studentList.hasNextPage==false">
+                <li><a href="#">&raquo;</a></li>
+            </template>
+            <!--如果有下一页，可点-->
+            <template v-if="studentList.hasNextPage==true">
+                <!--把当前页码的下一页传送给axios-->
+                <li @click="to_page(studentList.pageNum+1)"><a href="#">&raquo;</a></li>
+            </template>
+        </ul>
+    </div>
+    <div class="modal fade" id="courseModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document" style="width: 940px">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #3faa53 ">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">新增课程</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" action="/addCourse" method="post">
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">年级：</label>
+                                    <div class="col-sm-8">
+                                        <select name="grade2" id="selectGrade" class="form-control">
+                                            <option value="0">-请选择-</option>
+                                            <option value="大一">-大一-</option>
+                                            <option value="大二">-大二-</option>
+                                            <option value="大三">-大三-</option>
+                                            <option value="大四">-大四-</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">学院：</label>
+                                    <div class="col-sm-8">
+                                        <select name="college2" id="selectCollege" class="form-control">
+                                            <option value="0">-请选择-</option>
+                                            <option value="机电学院">-机电学院-</option>
+                                            <option value="电子信息工程学院">-电子信息工程学院-</option>
+                                            <option value="软件工程学院">-软件工程学院-</option>
+                                            <option value="通信学院">-通信学院-</option>
+                                            <option value="传媒学院">-传媒学院-</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">专业：</label>
+                                    <div class="col-sm-8">
+                                        <select name="major2" id="selectMajor" class="form-control">
+                                            <option value="0">-专业-</option>
+                                            <option value="电子信息工程">-电子信息工程-</option>
+                                            <option value="计算机与网络">-计算机与网络-</option>
+                                            <option value="Java技术">-Java技术-</option>
+                                            <option value="通信技术">-通信技术-</option>
+                                            <option value="摄影">-摄影-</option>
+                                            <option value="摄影">-摄影-</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">课程：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="courses2" id="selectCourse" placeholder="课程" >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="submit" class="btn btn-primary">添加</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <div class="modal fade" id="editCourseModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document" style="width: 940px">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #3faa53 ">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">修改信息</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" action="/updateCourse" method="post">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">年级：</label>
+                                    <div class="col-sm-8">
+                                        <select name="grade" id="edidtGrade" class="form-control">
+                                            <option value="courseDetail.grade">{{courseDetail.grade}}</option>
+                                            <option value="大一">-大一-</option>
+                                            <option value="大二">-大二-</option>
+                                            <option value="大三">-大三-</option>
+                                            <option value="大四">-大四-</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">学院：</label>
+                                    <div class="col-sm-8">
+                                        <select name="college" id="editCollege" class="form-control">
+                                            <option value="courseDetail.college">{{courseDetail.college}}</option>
+                                            <option value="机电学院">-机电学院-</option>
+                                            <option value="电子信息工程学院">-电子信息工程学院-</option>
+                                            <option value="软件工程学院">-软件工程学院-</option>
+                                            <option value="通信学院">-通信学院-</option>
+                                            <option value="传媒学院">-传媒学院-</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">专业：</label>
+                                    <div class="col-sm-8">
+                                        <select name="major" id="editMajor" class="form-control">
+                                            <option value="courseDetail.major">{{courseDetail.major}}</option>
+                                            <option value="电子信息工程">-电子信息工程-</option>
+                                            <option value="计算机与网络">-计算机与网络-</option>
+                                            <option value="Java技术">-Java技术-</option>
+                                            <option value="通信技术">-通信技术-</option>
+                                            <option value="摄影">-摄影-</option>
+                                            <option value="摄影">-摄影-</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">课程：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="courses" id="editCourse"  v-model="courseDetail.courses">
+                                        <input type="hidden" class="form-control" name="id" id="id"  v-model="courseDetail.id">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="submit" class="btn btn-primary">确认修改</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+    <script>
+        $(function () {
+            $('#popup').popup();
+            $("body").css("overflow-y", "hidden");
+        });
+
+        $("body").css("overflow-y", "hidden");
+        $("#search-btn").click(function (){
+            var valSelect=$("#select option:selected").val();
+            var valInput=$("#search-input").val();
+            var reg = /^\d{1,11}$/;
+            if (valSelect=="orderId"){
+                if (reg.test(valInput)){
+                    return true;
+                }else {
+                    alert("输入错误");
+                }
+            }
+        });
+    </script>
+</div>
+<script src="/commons/plugins/iview/js/vue.min.js"></script>
+<script src="/commons/plugins/iview/js/vue-router.js"></script>
+<script type="text/javascript" src="/commons/plugins/iview/js/axios.min.js"></script>
+<script type="text/javascript" src="/commons/js/axiosUtils.js"></script>
+<script type="text/javascript" src="/page/js/courseList.js"></script>
+</body>
+</html>
+

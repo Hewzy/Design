@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cn.jk.mapper.TbRoleMapper">
+  <resultMap id="BaseResultMap" type="com.cn.jk.entity.TbRole">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="role_id" jdbcType="INTEGER" property="roleId" />
+    <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    <result column="updated" jdbcType="TIMESTAMP" property="updated" />
+    <result column="created" jdbcType="TIMESTAMP" property="created" />
+  </resultMap>
+  <select id="getRoleById" parameterType="Integer" resultMap="BaseResultMap">
+        select * from tb_role where role_id=#{roleId}
+    </select>
+
+  <select id="getListRole"  resultMap="BaseResultMap">
+        select * from tb_role
+    </select>
+
+  <!--增加角色-->
+  <insert id="addRole" >
+    INSERT INTO tb_role
+      (role_name,updated,created)
+    VALUES (#{roleName},#{updated},#{created})
+  </insert>
+  <!--查询角色-->
+  <select id="findRole">
+    SELECT
+      role_id,
+      role_name,
+      updated,
+      created
+    FROM
+      tb_role
+  </select>
+  <!--根据id获取角色-->
+  <select id="fingRoleNameById" parameterType="Integer" resultType="com.cn.jk.entity.TbRole">
+    select role_name
+    FROM tb_role
+    where role_id = #{roleId}
+  </select>
+  <!--根据名字获取角色id-->
+  <select id="findIdByRoleName" parameterType="Integer" resultType="com.cn.jk.entity.TbRole">
+    select role_id
+    FROM tb_role
+    WHERE role_name = #{roleName}
+  </select>
+  <!--删除角色-->
+  <!--通过id删除角色-->
+  <delete id="delRole" parameterType="Integer">
+    delete from tb_role where 1=1 and role_id =#{roleId}
+  </delete>
+  <!--修改角色-->
+  <update id="updateRole">
+    UPDATE tb_role
+    SET role_name = #{roleName}
+    WHERE
+      role_id = #{roleId}
+  </update>
+</mapper>

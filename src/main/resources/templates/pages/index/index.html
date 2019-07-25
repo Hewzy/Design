@@ -1,0 +1,118 @@
+    <!doctype html>
+    <html xmlns:th="http://www.thymeleaf.org"
+          xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>学籍信息管理系统</title>
+        <link rel="stylesheet" type="text/css" href="/assets/styles/web/sfont.css">
+        <link rel="stylesheet" href="/assets/styles/index.css">
+        <link rel="stylesheet" href="/assets/styles/reset.css">
+        <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="http://www.jq22.com/jquery/bootstrap-3.3.4.css">
+    </head>
+    <body class="index" style="overflow-y: hidden">
+    <div class="main">
+        <!--左侧手风琴开始-->
+        <div class="left">
+            <div class="left-h2">
+                <img src="/assets/images/OMS.png" alt="">
+                <h2>Student's System</h2>
+            </div>
+            <dl class="list_dl">
+                <!--加上id="open"默认打开-->
+                <dt class="list_dt" shiro:hasPermission="order">
+                    <i class="i_orders left-i"></i>
+                    <p>学籍管理</p>
+                    <i class="list_dt_icon"></i>
+                </dt>
+                <dd class="list_dd">
+                    <ul class="list_dd_ul"  >
+                        <li class="list_li" mid="tab1"  funurl="/stuListPage">
+                            <a tabindex="-1" href="javascript:void(0);" id="default">学生列表</a>
+                        </li>
+                        <li class="list_li" mid="tab2" funurl="/transferStuListPage">
+                            <a tabindex="-1" href="javascript:void(0);">转校生列表</a>
+                        </li>
+                        <li class="list_li" mid="tab3" funurl="/schoolLeaverPage">
+                            <a tabindex="-1" href="javascript:void(0);">离校生列表</a>
+                        </li>
+                    </ul>
+                </dd>
+                <dt class="list_dt" shiro:hasPermission="goods">
+                    <!--<span class="_after"></span>-->
+                    <i class="i_goods left-i"></i>
+                    <p>成绩管理</p>
+                    <i class="list_dt_icon"></i>
+                </dt>
+                <dd class="list_dd">
+                    <ul class="list_dd_ul">
+                        <li class="list_li" mid="tab4" funurl="/getScorePage">
+                            <a tabindex="-1" href="javascript:void(0);">成绩列表</a>
+                        </li>
+                        <li class="list_li" mid="tab5" funurl="/courseListPage">
+                            <a tabindex="-1" href="javascript:void(0);">课程列表</a>
+                        </li>
+                    </ul>
+                </dd>
+                <dt class="list_dt">
+                    <!--<span class="_after"></span>-->
+                    <i class="i_user left-i"></i>
+                    <p>系统管理   </p>
+                    <i class="list_dt_icon"></i>
+                </dt>
+                <dd class="list_dd">
+                    <ul class="list_dd_ul">
+                        <li class="list_li" mid="tab9" funurl="/getAllUser?page=1&size=4">
+                            <a tabindex="-1" href="javascript:void(0);">权限管理</a>
+                        </li>
+                        </li>
+                        <li class="list_li" mid="tab12" funurl="/tbRole">
+                            <a tabindex="-1" href="javascript:void(0);">角色管理</a>
+                            </li>
+                    </ul>
+                </dd>
+            </dl>
+        </div>
+        <div class="right">
+            <!--右侧导航栏  -->
+            <div class="tablan col-md-12" id="mainFrameTabs" style="padding : 0px;">
+               <span class="shrink">
+                    <i class="fa fa-arrow-left" ></i>
+               </span>
+                <ul class="user-list">
+                    <li><a href="/logout"><i class="i_quit" style="font-size: 25px"></i></a> </li>
+                    <span class="logoff">注销</span>
+                </ul>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active noclose"><a href="#bTabs_navTabsMainPage" data-toggle="tab">首页</a>
+                    </li>
+                </ul>
+                <!--noclose-->
+                <div class="tab-content">
+                    <div class="tab-pane active" id="bTabs_navTabsMainPage">
+                        <div class="home-page">
+                            <div class="page-title">
+                                <h2>欢迎使用学籍信息管理系统！</h2>
+                            </div>
+                            <div class="page-welcome">
+                                <img src="/assets/images/welcome.jpg" alt="" style="width: 100%;" id="img" >
+                            </div>
+                            <div class="page-clock">
+                                <canvas id="canvas" width="300" height="300">
+                                </canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/assets/javascript/jquery-2.1.1.min.js"></script>
+    <script src="/assets/javascript/tabs/tabs.js"></script>
+    <script src="/assets/javascript/index.js"></script>
+    <script src="/assets/javascript/clock.js"></script>
+    <script src="http://www.jq22.com/jquery/bootstrap-3.3.4.js"></script>
+    </body>
+    </html>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cn.jk.mapper.ScoreMapper">
+  <resultMap id="BaseResultMap" type="com.cn.jk.entity.MarkDto">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="stu_id" jdbcType="INTEGER" property="stuId" />
+    <result column="courses" jdbcType="VARCHAR" property="courses" />
+    <result column="score" jdbcType="DOUBLE" property="score" />
+    <result column="grade" jdbcType="VARCHAR" property="grade" />
+    <result column="classes" jdbcType="VARCHAR" property="classes" />
+    <result column="college" jdbcType="VARCHAR" property="college" />
+    <result column="academic" jdbcType="VARCHAR" property="academic" />
+    <result column="major" jdbcType="VARCHAR" property="major" />
+    <association property="stu" javaType="com.cn.jk.entity.student">
+        <id column="stu_id" jdbcType="INTEGER" property="stuId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+    </association>
+  </resultMap>
+  <select id="getAllScore" resultMap="BaseResultMap">
+        select
+         mark.* ,
+         student.name
+         from mark,student
+         where
+         student.stu_id=mark.stu_id
+      <if test="stuId !=null and stuId != ''">
+          AND mark.stu_id like CONCAT('%',#{stuId},'%')
+      </if>
+      <if test="college!=null and college != ''">
+          AND mark.college like CONCAT('%',#{college},'%')
+      </if>
+      <if test="major !=null and major != ''">
+          AND mark.major like CONCAT('%',#{major},'%')
+      </if>
+      <if test="classes !=null and classes != ''">
+          AND mark.classes like CONCAT('%',#{classes},'%')
+      </if>
+    </select>
+  <select id="editScoreModal" resultMap="BaseResultMap">
+        select
+         mark.* ,
+         student.name
+         from mark,student
+         where
+         student.stu_id=mark.stu_id and mark.id=#{id}
+    </select>
+  <select id="getScore" resultMap="BaseResultMap">
+        select
+         mark.* ,
+         student.name
+         from mark,student
+         where
+         student.stu_id=mark.stu_id and mark.grade = #{grade}
+    </select>
+    <update id="updateScore">
+        update mark set score=#{score}  where id=#{id}
+    </update>
+</mapper>

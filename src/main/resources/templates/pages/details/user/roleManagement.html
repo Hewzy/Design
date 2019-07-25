@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>表格</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="/assets/javascript/popup/popup.js"></script>
+    <script src="/assets/javascript/pager.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/assets/styles/search.css">
+    <link rel="stylesheet" href="/assets/styles/pager.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>-->
+</head>
+<style>
+    .js-example-basic-multiple li{
+        float: left;
+    }
+</style>
+<body style="overflow-x:hidden;background:#f3f3f3;">
+<div id="roleManagement">
+    <div class="btn-div">
+        <button type="button" class="btn btn-primary" @click="creat">新增</button>
+    </div>
+    <!-- 表格部分 -->
+    <div>
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                    <th>角色名</th>
+                    <th>更新时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+            <template v-for="list in roleDate.list"v-cloak>
+                <tr>
+                    <td>{{list.roleName}}</td>
+                    <td>{{list.updated}}</td>
+                    <td class="operation">
+                        <button type="button" class="btn btn-default btn-xs" @click="edit(`${list.roleId}`,`${list.roleName}`)">编辑</button>
+                        <button type="button" class="btn btn-danger btn-xs" @click="del(`${list.roleId}`)">删除</button>
+                    </td>
+                </tr>
+            </template>
+            </tbody>
+        </table>
+    </div>
+    <div id="pagination" class="pagination"></div>
+    <div class="footer-pager">
+        <!--解析显示分页信息-->
+        <!--分页文字信息-->
+        <span>共{{roleDate.pages}}页，当前第{{roleDate.pageNum}}页，总{{roleDate.total}}条数据</span>
+        <!--分页条信息-->
+        <ul class="pagination">
+            <!--如果无上一页，不可点-->
+            <template v-if="roleDate.hasPreviousPage==false">
+                <li><a href="#">&laquo;</a></li>
+            </template>
+            <!--如果有上一页，可点-->
+            <template v-if="roleDate.hasPreviousPage==true">
+                <!--点前一页，跳到当前页码前一页-->
+                <li @click="to_page(roleDate.pageNum-1)"><a href="#">&laquo;</a></li>
+            </template>
+
+            <!--遍历连续显示的页码-->
+            <template v-for="pagenum in roleDate.navigatepageNums">
+                <!--如果是当前页码，高亮显示-->
+                <template v-if="pagenum==roleDate.pageNum">
+                    <li class="active"><a href="#">{{pagenum}}</a></li>
+                </template>
+                <!--如果不是当前页码，正常显示-->
+                <template v-if="pagenum!=roleDate.pageNum">
+                    <!--点击后把当前页码传送给axios-->
+                    <li class @click="to_page(pagenum)"><a href="#">{{pagenum}}</a></li>
+                </template>
+            </template>
+
+            <!--如果无下一页，不可点-->
+            <template v-if="roleDate.hasNextPage==false">
+                <li><a href="#">&raquo;</a></li>
+            </template>
+            <!--如果有下一页，可点-->
+            <template v-if="roleDate.hasNextPage==true">
+                <!--把当前页码的下一页传送给axios-->
+                <li @click="to_page(roleDate.pageNum+1)"><a href="#">&raquo;</a></li>
+            </template>
+        </ul>
+    </div>
+    <!--新增弹出框-->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">新增角色</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal add" role="form">
+                        <div class="form-group" style="display:none;">
+                            <label for="id" class="col-sm-2 control-label">id</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="id" id="id" placeholder="请输入id">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label for="firstname" class="col-sm-2 control-label" id="roleName">角色名称</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="firstname" class="form-control" id="firstname" placeholder="请输入角色名称">
+                                <!--<span class="notice">角色名称格式错误</span>-->
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">角色权限</label>
+                            <div class="col-sm-10">
+                                <select class="form-control select2" multiple="multiple" id="permission" data-placeholder="Select a State"
+                                        style="width: 100%;">
+                                    <option value="1">成绩管理</option>
+                                    <option value="2">学籍管理</option>
+                                    <option value="3">账号管理</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="save()">保存</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!--删除弹出框-->
+    <div class="modal fade" id="demoModal-2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="border: 0">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel-2">确认要删除当前用户吗</h4>
+                </div>
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer" style="border: 0">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary"  data-dismiss="modal">确认删除</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<script src="/commons/plugins/iview/js/vue.min.js"></script>
+<script src="/commons/plugins/iview/js/vue-router.js"></script>
+<script type="text/javascript" src="/commons/plugins/iview/js/axios.min.js"></script>
+<script type="text/javascript" src="/commons/js/axiosUtils.js"></script>
+<script type="text/javascript" src="/page/js/tbRole.js"></script>
+</html>

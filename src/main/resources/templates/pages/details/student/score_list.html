@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.w3.org/1999/xhtml">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>表格</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="/assets/javascript/popup/popup.js"></script>
+    <script src="/assets/javascript/popup/orderpopup.js"></script>
+    <link rel="stylesheet" href="/assets/styles/search.css">
+    <link rel="stylesheet" type="text/css" href="/assets/styles/specific/order-detail.css"/>
+</head>
+<body style="overflow-x:hidden;background:#f3f3f3;">
+<div id="scoreList">
+    <div id="mask_shadow"></div>
+    <div class="btn-div">
+        <button type="button" class="btn btn-primary" @click="refreshPage">刷新</button>
+        <button type="button" class="btn btn-primary" id="addCourse"  data-toggle="modal" data-target="#addScoreStu">新增成績</button>
+        <button type="button" class="btn btn-primary" id="first" @click="fistStuList">大一年级</button>
+        <button type="button" class="btn btn-primary" id="second" @click="secondStuList">大二年级</button>
+        <button type="button" class="btn btn-primary" id="third" @click="thirdStuList">大三年级</button>
+        <button type="button" class="btn btn-primary" id="fourth" @click="fourthStuList">大四年级</button>
+        <div class="search-box">
+            <form action="">
+                <select  v-model="selected">
+                    <option v-for="option in options3"  :value="option.value">
+                        {{ option.text }}
+                    </option>
+                </select>
+                <input placeholder="请输入……"  v-model.trim="searchInput3">
+                <button type="button" class="btn btn-success" @click="searchBtn66">搜索</button>
+            </form>
+        </div>
+    </div>
+    <div>
+        <table class="table table-condensed" style=" background-color: floralwhite;">
+            <thead>
+            <tr>
+                <th>选择</th>
+                <th>姓名</th>
+                <th>课程</th>
+                <th>成绩</th>
+                <th>专业</th>
+                <th>学院</th>
+                <th>班级</th>
+                <th class="operation">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <template v-for="list in studentList.list" v-cloak>
+                <tr>
+                    <td>
+                        <input type="radio" :value="list.id" v-model="checkedNames" />
+                    </td>
+                    <td>{{list.stu.name}}</td>
+                    <td>{{list.courses}}</td>
+                    <td>{{list.score}}</td>
+                    <td>{{list.major}}</td>
+                    <td>{{list.college}}</td>
+                    <td>{{list.classes}}</td>
+                    <td class="operation">
+                        <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#editScoreModal" @click="editScoreModal(list.id)">修改</button>
+                        <button type="button" class="btn btn-danger btn-xs" @click="removeScoreModal(list.id)">删除</button>
+                    </td>
+                </tr>
+            </template>
+            </tbody>
+        </table>
+    </div>
+    <div class="footer-pager">
+        <!--解析显示分页信息-->
+        <!--分页文字信息-->
+        <span>共{{studentList.pages}}页，当前第{{studentList.pageNum}}页，总{{studentList.total}}条数据</span>
+        <!--分页条信息-->
+        <ul class="pagination">
+            <!--如果无上一页，不可点-->
+            <template v-if="studentList.hasPreviousPage==false">
+                <li><a href="#">&laquo;</a></li>
+            </template>
+            <!--如果有上一页，可点-->
+            <template v-if="studentList.hasPreviousPage==true">
+                <!--点前一页，跳到当前页码前一页-->
+                <li @click="to_page(studentList.pageNum-1)"><a href="#">&laquo;</a></li>
+            </template>
+
+            <!--遍历连续显示的页码-->
+            <template v-for="pagenum in studentList.navigatepageNums">
+                <!--如果是当前页码，高亮显示-->
+                <template v-if="pagenum==studentList.pageNum">
+                    <li class="active"><a href="#">{{pagenum}}</a></li>
+                </template>
+                <!--如果不是当前页码，正常显示-->
+                <template v-if="pagenum!=studentList.pageNum">
+                    <!--点击后把当前页码传送给axios-->
+                    <li class @click="to_page(pagenum)"><a href="#">{{pagenum}}</a></li>
+                </template>
+            </template>
+
+            <!--如果无下一页，不可点-->
+            <template v-if="studentList.hasNextPage==false">
+                <li><a href="#">&raquo;</a></li>
+            </template>
+            <!--如果有下一页，可点-->
+            <template v-if="studentList.hasNextPage==true">
+                <!--把当前页码的下一页传送给axios-->
+                <li @click="to_page(studentList.pageNum+1)"><a href="#">&raquo;</a></li>
+            </template>
+        </ul>
+    </div>
+
+    <div class="modal fade" id="addScoreStu" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document" style="width: 940px">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #3faa53 ">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">新增成绩</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" action="/addScoreStu" method="post">
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">年级：</label>
+                                    <div class="col-sm-8">
+                                        <select name="grade3" id="selectGrade" class="form-control">
+                                            <option value="0">-请选择-</option>
+                                            <option value="大一">-大一-</option>
+                                            <option value="大二">-大二-</option>
+                                            <option value="大三">-大三-</option>
+                                            <option value="大四">-大四-</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">班级：</label>
+                                    <div class="col-sm-8">
+                                        <select name="classes3" id="classes3" class="form-control">
+                                            <option value="0">-请选择-</option>
+                                            <option value="一班">-一班-</option>
+                                            <option value="二班">-二班-</option>
+                                            <option value="三班">-三班-</option>
+                                            <option value="四班">-四班-</option>
+                                            <option value="五班">-五班-</option>
+                                            <option value="转本一班">-转本一班-</option>
+                                            <option value="转本二班">-转本二班-</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">学院：</label>
+                                    <div class="col-sm-8">
+                                        <select name="college3" id="college3" class="form-control">
+                                            <option value="0">-请选择-</option>
+                                            <option value="机电学院">-机电学院-</option>
+                                            <option value="电子信息工程学院">-电子信息工程学院-</option>
+                                            <option value="软件工程学院">-软件工程学院-</option>
+                                            <option value="通信学院">-通信学院-</option>
+                                            <option value="传媒学院">-传媒学院-</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">专业：</label>
+                                    <div class="col-sm-8">
+                                        <select name="major3" id="major3" class="form-control">
+                                            <option value="0">-请选择-</option>
+                                            <option value="电子信息工程">-电子信息工程-</option>
+                                            <option value="计算机与网络">-计算机与网络-</option>
+                                            <option value="Java技术">-Java技术-</option>
+                                            <option value="通信技术">-通信技术-</option>
+                                            <option value="摄影">-摄影-</option>
+                                            <option value="摄影">-摄影-</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">课程：</label>
+                                    <div class="col-sm-8">
+                                        <select name="courses3" id="courses3" class="form-control">
+                                            <option value="0">-请选择-</option>
+                                            <option value="机械设计">-机械设计-</option>
+                                            <option value="Spring">-Spring-</option>
+                                            <option value="PLC">-PLC-</option>
+                                            <option value="SSM">-SSM-</option>
+                                            <option value="网络课">-网络课 -</option>
+                                            <option value="c++">-c++-</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">分数：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="score3" id="score3" placeholder="分数" >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">学号：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="stuId" id="stuId" placeholder="学号" >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="submit" class="btn btn-primary">添加</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <div class="modal fade" id="editScoreModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document" style="width: 940px">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #3faa53 ">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">修改成绩</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" action="/updateScore" method="post">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">姓名：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" readonly="readonly" class="form-control" name="name" id="name" v-model="scoreDetails.name">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">课程：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" readonly="readonly" class="form-control" name="courses" id="courses" v-model="scoreDetails.courses">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">分数：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="score" id="score"  v-model="scoreDetails.score">
+                                        <input type="hidden" class="form-control" name="id" id="id"  v-model="scoreDetails.id">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="submit" class="btn btn-primary">确认修改</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <script>
+        $(function () {
+            $('#popup').popup();
+            $("body").css("overflow-y", "hidden");
+        });
+
+        /*$('#orderpopup').orderpopup();*/
+        $("body").css("overflow-y", "hidden");
+        $("#search-btn").click(function (){
+            var valSelect=$("#select option:selected").val();
+            var valInput=$("#search-input").val();
+            var reg = /^\d{1,11}$/;
+            if (valSelect=="orderId"){
+                if (reg.test(valInput)){
+                    return true;
+                }else {
+                    alert("输入错误");
+                }
+            }
+        });
+    </script>
+</div>
+<script src="/commons/plugins/iview/js/vue.min.js"></script>
+<script src="/commons/plugins/iview/js/vue-router.js"></script>
+<script type="text/javascript" src="/commons/plugins/iview/js/axios.min.js"></script>
+<script type="text/javascript" src="/commons/js/axiosUtils.js"></script>
+<script type="text/javascript" src="/page/js/scoreList.js"></script>
+<script src="/assets/javascript/check.js"></script>
+</body>
+</html>
+

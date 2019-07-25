@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>学生详情</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="/assets/javascript/popup/popup.js"></script>
+    <script src="/assets/javascript/popup/orderpopup.js"></script>
+    <link rel="stylesheet" type="text/css" href="/assets/styles/specific/order-detail.css"/>
+</head>
+<body style="overflow-x:hidden;">
+<div class="container" style="top: -380px;">
+    <div class="main-body">
+        <div class="main-content1"  style="
+    margin: 100px;
+    border: 2px solid #adadbc;
+    PADDING: 35px;
+    box-shadow: 0 0 25px #adadbc;
+    background-color: #91a6bb;
+    border-radius: 18px;
+">
+            <table class="table table-hover">
+                <div class="title"><text style="padding-left: 44%;">详细信息</text></div><br/>
+                <div class="title-content">
+                    <tr class="title-content1" style="height: 65px;font-weight: 1000;">
+                        <td><div class="">姓名：<input style="background-color: inherit;" disabled="disabled" th:value="${allCourse[0].name}"></div></td>
+                        <td><div class="">专业：<input style="background-color: inherit;" disabled="disabled" th:value="${allCourse[0].major}"></div></td>
+                    </tr>
+                    <tr th:each="temp:${allCourse}">
+                        <td><div class="title-content2" >
+                            <div class="">年级：<input style="background-color: inherit;" disabled="disabled"  th:value="${temp.grade}"></div>
+                        </div></td>
+                        <td><div class="title-content3">
+                            <div class="">课程：<input style="background-color: inherit;" disabled="disabled"  th:value="${temp.courses}"></div>
+                        </div></td>
+                    </tr>
+                </div>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

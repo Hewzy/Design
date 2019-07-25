@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>表格</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="/assets/javascript/popup/popup.js"></script>
+    <script src="/assets/javascript/popup/orderpopup.js"></script>
+    <link rel="stylesheet" href="/assets/styles/search.css">
+    <link rel="stylesheet" type="text/css" href="/assets/styles/specific/order-detail.css"/>
+</head>
+<body style="overflow-x:hidden;background:#f3f3f3;">
+<div id="schoolLeaver">
+    <div id="mask_shadow"></div>
+    <div class="btn-div">
+        <button type="button" class="btn btn-primary" @click="refreshPage">刷新</button>
+        <button type="button" class="btn btn-primary" id="Details" @click="stuDetails">详细信息</button>
+        <div class="search-box">
+            <form action="">
+                <select  v-model="selected">
+                    <option v-for="option in options3"  :value="option.value">
+                        {{ option.text }}
+                    </option>
+                </select>
+                <input placeholder="请输入……"  v-model.trim="searchInput3">
+                <button type="button" class="btn btn-success" @click="searchBtn3">搜索</button>
+            </form>
+        </div>
+    </div>
+    <div>
+        <table class="table table-condensed" style=" background-color: floralwhite;">
+            <thead>
+            <tr>
+                <th>选择</th>
+                <th>学号</th>
+                <th>姓名</th>
+                <th>学院</th>
+                <th>专业</th>
+                <th>班级</th>
+                <th>学籍</th>
+                <th>性别</th>
+                <th class="operation">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <template v-for="list in studentList.list" v-cloak>
+                <tr>
+                    <td>
+                        <input type="radio" :value="list.stuId" v-model="checkedNames" />
+                    </td>
+                    <td>{{list.stuId}}</td>
+                    <td>{{list.name}}</td>
+                    <td>{{list.college}}</td>
+                    <td>{{list.major}}</td>
+                    <td>{{list.classes}}</td>
+                    <td>{{list.stuStatus}}</td>
+                    <td>{{list.gender}}</td>
+                    <td class="operation">
+                        <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#myModal" @click="stuDetailsEdit">修改</button>
+                        <button type="button" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#demoModal-2" id="removeStu" @click="removeStu(list.stuId)">删除</button>
+                    </td>
+                </tr>
+            </template>
+            </tbody>
+        </table>
+    </div>
+    <div class="footer-pager">
+        <!--解析显示分页信息-->
+        <!--分页文字信息-->
+        <span>共{{studentList.pages}}页，当前第{{studentList.pageNum}}页，总{{studentList.total}}条数据</span>
+        <!--分页条信息-->
+        <ul class="pagination">
+            <!--如果无上一页，不可点-->
+            <template v-if="studentList.hasPreviousPage==false">
+                <li><a href="#">&laquo;</a></li>
+            </template>
+            <!--如果有上一页，可点-->
+            <template v-if="studentList.hasPreviousPage==true">
+                <!--点前一页，跳到当前页码前一页-->
+                <li @click="to_page(studentList.pageNum-1)"><a href="#">&laquo;</a></li>
+            </template>
+
+            <!--遍历连续显示的页码-->
+            <template v-for="pagenum in studentList.navigatepageNums">
+                <!--如果是当前页码，高亮显示-->
+                <template v-if="pagenum==studentList.pageNum">
+                    <li class="active"><a href="#">{{pagenum}}</a></li>
+                </template>
+                <!--如果不是当前页码，正常显示-->
+                <template v-if="pagenum!=studentList.pageNum">
+                    <!--点击后把当前页码传送给axios-->
+                    <li class @click="to_page(pagenum)"><a href="#">{{pagenum}}</a></li>
+                </template>
+            </template>
+
+            <!--如果无下一页，不可点-->
+            <template v-if="studentList.hasNextPage==false">
+                <li><a href="#">&raquo;</a></li>
+            </template>
+            <!--如果有下一页，可点-->
+            <template v-if="studentList.hasNextPage==true">
+                <!--把当前页码的下一页传送给axios-->
+                <li @click="to_page(studentList.pageNum+1)"><a href="#">&raquo;</a></li>
+            </template>
+        </ul>
+    </div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document" style="width: 940px">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #3faa53 ">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">修改信息</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" action="/updateStu" method="post">
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">姓名：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="name" placeholder="name" v-model="studentDetails.name">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">学号：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="stuId" placeholder="stuId" v-model="studentDetails.stuId">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">年级：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control"  name="grade" placeholder="grade" v-model="studentDetails.grade">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">学院：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="college" placeholder="college" v-model="studentDetails.college">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label"> 班级：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="classes" placeholder="classes" v-model="studentDetails.classes">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">专业：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="major" placeholder="major" v-model="studentDetails.major">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">名族：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="famousRace" placeholder="famousRace" v-model="studentDetails.famousRace">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">地址：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="adress"  placeholder="adress" v-model="studentDetails.adress">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">学校：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="school" placeholder="school" v-model="studentDetails.school">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">之前学校：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="beforeSchool" placeholder="beforeSchool" v-model="studentDetails.beforeSchool">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">入学时间：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="admissionTime"  placeholder="admissionTime" v-model="studentDetails.admissionTime">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">身份证号：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="numberId"  placeholder="numberId" v-model="studentDetails.numberId">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">学籍状态：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="stuStatus"  placeholder="stuStatus" v-model="studentDetails.stuStatus">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">出生日期：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="birth"  placeholder="birth" v-model="studentDetails.birth">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">是否转校生：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="stuTransfer" placeholder="stuTransfer" v-model="studentDetails.stuTransfer">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">邮件：</label>
+                                    <div class="col-sm-8">
+                                        <input type="email" class="form-control" name="email"  placeholder="email" v-model="studentDetails.email">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">性别：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="gender" placeholder="gender" v-model="studentDetails.gender">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">学历：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="education" placeholder="education" v-model="studentDetails.education">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">政治面貌：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="identity" placeholder="identity" v-model="studentDetails.identity">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">英语等级：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="englishLevel" placeholder="englishLevel" v-model="studentDetails.englishLevel">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">计算机等级：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="computerLevel" placeholder="computerLevel" v-model="studentDetails.computerLevel">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">父亲名：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="fatherName" placeholder="fatherName" v-model="studentDetails.fatherName">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">母亲名：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="motherName" placeholder="motherName" v-model="studentDetails.motherName">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">母亲手机号：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="motherPhone" placeholder="motherPhone" v-model="studentDetails.motherPhone">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">父亲手机号：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="fatherPhone" placeholder="fatherPhone" v-model="studentDetails.fatherPhone">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="submit" class="btn btn-primary">保存</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 800px">
+            <div class="modal-content">
+                <div class="title"><text>详细信息</text></div>
+                <div class="title-content">
+                    <div class="title-content1">
+                        <div class="title-content1-top1">姓名：{{studentDetails.name}}</div>
+                        <div class="title-content1-top2">学号：{{studentDetails.stuId}}</div>
+                        <div class="title-content1-top3">年级：{{studentDetails.grade}}</div>
+                    </div>
+                    <div class="title-content2">
+                        <div class="title-content1-top1">学院：{{studentDetails.college}}</div>
+                        <div class="title-content1-top2">班级：{{studentDetails.classes}}</div>
+                        <div class="title-content1-top3">专业：{{studentDetails.major}}</div>
+                    </div>
+                    <div class="title-content3">
+                        <div class="title-content1-top1">名族：{{studentDetails.famousRace}}</div>
+                        <div class="title-content1-top2">地址：{{studentDetails.adress}}</div>
+                        <div class="title-content1-top3">学校：{{studentDetails.school}}</div>
+                    </div>
+                    <div class="title-content3">
+                        <div class="title-content1-top1">之前学校：{{studentDetails.beforeSchool}}</div>
+                        <div class="title-content1-top1">入学时间：{{studentDetails.admissionTime}}</div>
+                        <div class="title-content1-top1">身份证号：{{studentDetails.numberId}}</div>
+                    </div>
+                    <div class="title-content3">
+                        <div class="title-content1-top1">学籍状态：{{studentDetails.stuStatus}}</div>
+                        <div class="title-content1-top1">出生日期：{{studentDetails.birth}}</div>
+                    </div>
+                    <div class="title-content3">
+                        <div class="title-content1-top1">是否转校生：{{studentDetails.stuTransfer}}</div>
+                        <div class="title-content1-top1">手机号：{{studentDetails.phoneNumber}}</div>
+                        <div class="title-content1-top1">邮件：{{studentDetails.email}}</div>
+                    </div>
+                    <div class="title-content3">
+                        <div class="title-content1-top1">性别：{{studentDetails.gender}}</div>
+                        <div class="title-content1-top1">学历：{{studentDetails.education}}</div>
+                        <div class="title-content1-top1">政治面貌：{{studentDetails.identity}}</div>
+                    </div>
+                    <div class="title-content3">
+                        <div class="title-content1-top1">英语等级：{{studentDetails.englishLevel}}</div>
+                        <div class="title-content1-top1">计算机等级：{{studentDetails.computerLevel}}</div>
+                        <div class="title-content1-top1">父亲名：{{studentDetails.fatherName}}</div>
+                    </div>
+                    <div class="title-content3">
+                        <div class="title-content1-top1">母亲名：{{studentDetails.motherName}}</div>
+                        <div class="title-content1-top1">母亲手机号：{{studentDetails.motherPhone}}</div>
+                        <div class="title-content1-top1">父亲手机号：{{studentDetails.fatherPhone}}</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <script>
+        $(function () {
+            $('#popup').popup();
+            $("body").css("overflow-y", "hidden");
+        });
+
+        /*$('#orderpopup').orderpopup();*/
+        $("body").css("overflow-y", "hidden");
+        $("#search-btn").click(function (){
+            var valSelect=$("#select option:selected").val();
+            var valInput=$("#search-input").val();
+            var reg = /^\d{1,11}$/;
+            if (valSelect=="orderId"){
+                if (reg.test(valInput)){
+                    return true;
+                }else {
+                    alert("输入错误");
+                }
+            }
+        });
+    </script>
+</div>
+<script src="/commons/plugins/iview/js/vue.min.js"></script>
+<script src="/commons/plugins/iview/js/vue-router.js"></script>
+<script type="text/javascript" src="/commons/plugins/iview/js/axios.min.js"></script>
+<script type="text/javascript" src="/commons/js/axiosUtils.js"></script>
+<script type="text/javascript" src="/page/js/stuList.js"></script>
+<script type="text/javascript" src="/page/js/schoolLeaver.js"></script>
+<script src="/assets/javascript/check.js"></script>
+</body>
+</html>
+

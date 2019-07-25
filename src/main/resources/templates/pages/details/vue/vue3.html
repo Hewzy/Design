@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible"  charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="app">
+    <todo>
+        <todo-title slot="todo-title" v-for="title in titles" v-bind:title="title"></todo-title>
+        <todo-items slot="todo-items" v-for="(item,index) in items" v-bind:item="item" v-bind:index="index" v-on:remove="removeitem(index)"></todo-items>
+    </todo>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script type="text/javascript">
+    Vue.component("todo",{
+        template:"<div>\
+                        <slot name='todo-title'></slot>\
+                        <ul>\
+                            <slot name='todo-items'></slot>\
+                        </ul>\
+                    </div>\
+                    "
+    });
+
+    Vue.component("todo-title",{
+        props:['title'],
+        template:"<div>{{title}}</div>"
+    });
+    Vue.component("todo-items",{
+        props:['item'],
+       template:"<li>{{index}}---{{item}}<button @click='remove111(index)'>删除</button></li>",
+        methods:{
+            remove111(index)  {
+                this.$emit('remove',index);
+            }
+        }
+    });
+
+    var vm = new Vue({
+        el:'#app',
+        data:{
+            titles:['111','222','333'],
+            items:['444','555','666']
+        },
+        methods:{
+            removeitem(index) {
+                console.log(index);
+                this.items.splice(index,1);
+            }
+
+        }
+    });
+</script>
+</body>
+</html>

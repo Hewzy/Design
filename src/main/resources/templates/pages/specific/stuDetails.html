@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>学生详情</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="/assets/javascript/popup/popup.js"></script>
+    <script src="/assets/javascript/popup/orderpopup.js"></script>
+    <link rel="stylesheet" type="text/css" href="/assets/styles/specific/order-detail.css"/>
+</head>
+<body style="overflow-x:hidden;">
+<div class="container" style="top: -380px;">
+    <div class="main-body">
+        <div class="main-content1"  style="
+    margin: 100px;
+    border: 2px solid #adadbc;
+    PADDING: 35px;
+    box-shadow: 0 0 25px #adadbc;
+    background-color: #91a6bb;
+    border-radius: 18px;
+">
+            <table class="table table-hover">
+                <div class="title"><text style="padding-left: 44%;">详细信息</text></div>
+                <div class="title-content">
+                    <div class="title-content1" style="height: 65px;font-weight: 1000;">
+                        <tr class="title-content1">
+                            <td><div class="">姓名：<input style="background-color: inherit;" disabled="disabled" th:value="${stuDetail.name}"></div></td>
+                            <td><div class="">学号：<input style="background-color: inherit;" disabled="disabled"  th:value="${stuDetail.stuId}"></div></td>
+                            <td><div class="">年级：<input style="background-color: inherit;" disabled="disabled" th:value="${stuDetail.grade}"></div></td>
+                        </tr>
+                        <tr class="title-content2">
+                            <td><div class="">学院：<input style="background-color: inherit;" disabled="disabled"  th:value="${stuDetail.college}"></div></td>
+                            <td><div class="">班级：<input style="background-color: inherit;" disabled="disabled"  th:value="${stuDetail.classes}"></div></td>
+                            <td><div class="">专业：<input style="background-color: inherit;" disabled="disabled"  th:value="${stuDetail.major}"></div></td>
+                        </tr>
+                        <tr class="title-content3">
+                            <td><div class="">名族：<input style="background-color: inherit;" disabled="disabled"  th:value="${stuDetail.famousRace}"></div></td>
+                            <td><div class="">地址：<input style="background-color: inherit;" disabled="disabled"  th:value="${stuDetail.adress}"></div></td>
+                            <td><div class="">学校：<input style="background-color: inherit;" disabled="disabled"  th:value="${stuDetail.school}"></div></td>
+                        </tr>
+                        <tr class="title-content3">
+                            <td><div class="">之前学校：<input style="background-color: inherit;" disabled="disabled" th:value="${stuDetail.beforeSchool}"></div></td>
+                            <!--<td><div class="">入学时间：<input style="background-color: inherit;" disabled="disabled" th:value="${stuDetail.admissionTime}"></div></td>-->
+                            <td><div class="">入学时间：<input style="background-color: inherit;" disabled="disabled" th:value="${#dates.format(stuDetail.admissionTime,'yyyy/MM/dd')}"></div></td>
+                            <td><div class="">身份证号：<input style="background-color: inherit;" disabled="disabled" th:value="${stuDetail.numberId}"></div></td>
+                        </tr>
+                        <tr class="title-content3">
+                            <td><div class="">学籍状态：<input style="background-color: inherit;" disabled="disabled" th:value="${stuDetail.stuStatus}"></div></td>
+                            <td><div class="">出生日期：<input style="background-color: inherit;" disabled="disabled" th:value="${stuDetail.birth}"></div></td>
+                        </tr>
+                        <tr class="title-content3">
+                            <td><div class="">是否转校生：<input style="background-color: inherit;" disabled="disabled" th:value="${stuDetail.stuTransfer}"></div></td>
+                            <td><div class="">手机号：<input style="background-color: inherit;" disabled="disabled" th:value="${stuDetail.phoneNumber}"></div></td>
+                            <td><div class="">邮件：<input style="background-color: inherit;" disabled="disabled" th:value="${stuDetail.email}"></div></td>
+                        </tr>
+                        <tr class="title-content3">
+                            <td><div class="">性别：<input style="background-color: inherit;" disabled="disabled" th:value="${stuDetail.gender}"></div></td>
+                            <td><div class="">学历：<input style="background-color: inherit;" disabled="disabled" th:value="${stuDetail.education}"></div></td>
+                            <td><div class="">政治面貌：<input style="background-color: inherit;" disabled="disabled" th:value="${stuDetail.identity}"></div></td>
+                        </tr>
+                        <tr class="title-content3">
+                            <td><div class="">英语等级：<input style="background-color: inherit;" disabled="disabled" th:value="${stuDetail.englishLevel}"></div></td>
+                            <td><div class="">计算机等级：<input style="background-color: inherit;" disabled="disabled" th:value="${stuDetail.computerLevel}"></div></td>
+                            <td><div class="">父亲名：<input style="background-color: inherit;" disabled="disabled" th:value="${stuDetail.fatherName}"></div></td>
+                        </tr>
+                        <tr class="title-content3">
+                            <td><div class="">母亲名：<input style="background-color: inherit;" disabled="disabled" th:value="${stuDetail.motherName}"></div></td>
+                            <td><div class="">母亲手机号：<input style="background-color: inherit;" disabled="disabled" th:value="${stuDetail.motherPhone}"></div></td>
+                            <td><div class="">父亲手机号：<input style="background-color: inherit;" disabled="disabled" th:value="${stuDetail.fatherPhone}"></div></td>
+                        </tr>
+                        <!--<td><div class="">姓名：<input style="background-color: inherit;" style="background-color: inherit;" disabled="disabled" th:value="${allCourse[0].name}"></div></td>-->
+                        <!--<td><div class="">专业：<input style="background-color: inherit;" style="background-color: inherit;" disabled="disabled" th:value="${allCourse[0].major}"></div></td>-->
+                    </div>
+                    <tr >
+                        <td><div class="title-content2" >
+                            <!--<div class="">年级：<input style="background-color: inherit;" style="background-color: inherit;" disabled="disabled"  th:value="${temp.grade}"></div>-->
+                        </div></td>
+                        <td><div class="title-content3">
+                            <!--<div class="">课程：<input style="background-color: inherit;" style="background-color: inherit;" disabled="disabled"  th:value="${temp.courses}"></div>-->
+                        </div></td>
+                    </tr>
+                </div>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

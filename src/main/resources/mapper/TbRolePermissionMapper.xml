@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cn.jk.mapper.TbRolePermissionMapper">
+  <resultMap id="BaseResultMap" type="com.cn.jk.entity.TbRolePermission">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="permission_id" jdbcType="INTEGER" property="permissionId" />
+    <result column="role_id" jdbcType="INTEGER" property="roleId" />
+  </resultMap>
+  <select id="getPermissionsByRole" resultType="com.cn.jk.entity.TbPermission">
+    SELECT
+      P.*
+    FROM
+      tb_permission AS P,
+      tb_role AS R,
+      tb_role_permission AS RP
+    WHERE
+      P.permission_id = RP.permission_id
+      AND R.role_id = RP.role_id
+      AND R.role_id = #{roleId}
+  </select>
+</mapper>

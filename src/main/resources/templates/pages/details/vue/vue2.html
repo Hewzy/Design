@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible"  charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="app">
+<ul>时间：{{nowTime()}}</ul>
+<div>时间：{{nowTime1}}</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script type="text/javascript">
+    Vue.component("my-component-li",{
+        props:['item2'],
+       template:"<li>{{item2}}</li>"
+    });
+
+    var vm = new Vue({
+        el:'#app',
+        methods:{
+            nowTime()  {
+            return Date.now();
+        }},
+        computed:{
+            nowTime1(){
+                return Date.now();
+            }
+        }
+    });
+</script>
+</body>
+</html>

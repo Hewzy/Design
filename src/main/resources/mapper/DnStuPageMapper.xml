@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cn.jk.mapper.StuPageMapper">
+    <resultMap id="BaseResultMap" type="com.cn.jk.entity.student">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="stu_id" jdbcType="INTEGER" property="stuId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="grade" jdbcType="VARCHAR" property="grade" />
+        <result column="classes" jdbcType="VARCHAR" property="classes" />
+        <result column="college" jdbcType="VARCHAR" property="college" />
+        <result column="famous_race" jdbcType="VARCHAR" property="famousRace" />
+        <result column="adress" jdbcType="VARCHAR" property="adress" />
+        <result column="major" jdbcType="VARCHAR" property="major" />
+        <result column="school" jdbcType="VARCHAR" property="school" />
+        <result column="before_school" jdbcType="VARCHAR" property="beforeSchool" />
+        <result column="admission_time" jdbcType="TIMESTAMP" property="admissionTime" />
+        <result column="stu_status" jdbcType="VARCHAR" property="stuStatus" />
+        <result column="birth" jdbcType="VARCHAR" property="birth" />
+        <result column="stu_transfer" jdbcType="VARCHAR" property="stuTransfer" />
+        <result column="phone_number" jdbcType="VARCHAR" property="phoneNumber" />
+        <result column="email" jdbcType="VARCHAR" property="email" />
+        <result column="gender" jdbcType="VARCHAR" property="gender" />
+        <result column="education" jdbcType="VARCHAR" property="education" />
+        <result column="identity" jdbcType="VARCHAR" property="identity" />
+        <result column="english_level" jdbcType="VARCHAR" property="englishLevel" />
+        <result column="computer_level" jdbcType="VARCHAR" property="computerLevel" />
+        <result column="father_name" jdbcType="VARCHAR" property="fatherName" />
+        <result column="mother_name" jdbcType="VARCHAR" property="motherName" />
+        <result column="father_phone" jdbcType="VARCHAR" property="fatherPhone" />
+        <result column="mother_phone" jdbcType="VARCHAR" property="motherPhone" />
+        <result column="number_id" jdbcType="LONGVARCHAR" property="numberId" />
+
+        <association property="mark" javaType="com.cn.jk.entity.Mark">
+            <!--<id column="receiver_id" jdbcType="INTEGER" property="receiverId" />-->
+            <id column="id" jdbcType="INTEGER" property="id" />
+            <result column="stu_id" jdbcType="INTEGER" property="stuId" />
+            <result column="courses" jdbcType="VARCHAR" property="courses" />
+            <result column="score" jdbcType="DOUBLE" property="score" />
+            <result column="grade" jdbcType="VARCHAR" property="grade" />
+            <result column="classes" jdbcType="VARCHAR" property="classes" />
+            <result column="college" jdbcType="VARCHAR" property="college" />
+            <result column="academic" jdbcType="VARCHAR" property="academic" />
+            <result column="major" jdbcType="VARCHAR" property="major" />
+            <!--<result column="updated" jdbcType="TIMESTAMP" property="updated" />-->
+            <!--<result column="order_id" jdbcType="INTEGER" property="orderId" />-->
+        </association>
+    </resultMap>
+    <select id="checkUser" resultType="java.lang.Integer">
+        select count(*) from student where stu_id = #{username} and password = #{password}
+    </select>
+    <select id="getAllMark" resultType="com.cn.jk.dto.markDto">
+        select
+        a.name,
+        b.courses,
+        b.score,
+        b.yearPart
+        from
+        student a,
+        mark b
+        where
+        a.stu_id = b.stu_id
+        and a.stu_id = #{stuId}
+    </select>
+
+    <select id="getAllCourse" resultType="com.cn.jk.dto.courseDto">
+        select
+        a.name,
+        b.courses,
+        b.grade,
+        b.major
+        from
+        student a,
+        course b
+        where
+        a.major = b.major
+        and a.stu_id = #{stuId}
+    </select>
+
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cn.jk.mapper.TbUserMapper">
+  <resultMap id="BaseResultMap" type="com.cn.jk.entity.TbUser">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="user_password" jdbcType="VARCHAR" property="userPassword" />
+    <result column="created" jdbcType="TIMESTAMP" property="created" />
+    <result column="updated" jdbcType="TIMESTAMP" property="updated" />
+    <result column="role_id" jdbcType="INTEGER" property="roleId" />
+    <association property="tbRole" javaType="com.cn.jk.entity.TbRole">
+      <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    </association>
+  </resultMap>
+  <insert id="addUser" parameterType="tbUser">
+        insert into tb_user(user_name,user_password,created,role_id)values (#{userName},#{userPassword},#{created},#{roleId})
+</insert>
+  <update id="updateUser" parameterType="tbUser">
+         update tb_user set user_name=#{userName},user_password=#{userPassword},updated=#{updated},role_id=#{roleId} where user_id=#{userId}
+    </update>
+  <select id="getUserById" parameterType="Integer" resultMap="BaseResultMap">
+        select tb_user.*,tb_role.role_name from tb_user,tb_role where user_id=#{userId} and tb_user.role_id=tb_role.role_id
+    </select>
+  <select id="getUserByName" parameterType="String" resultMap="BaseResultMap">
+        select * from tb_user where user_name=#{userName}
+    </select>
+  <delete id="deleteUser" parameterType="Integer">
+        delete from tb_user where user_id=#{userId}
+    </delete>
+
+  <select id="getAllUserList"  resultMap="BaseResultMap">
+        select * from tb_user
+    </select>
+
+  <select id="getAllUserListIndex"  resultMap="BaseResultMap" parameterType="Object">
+        select tb_user.*,tb_role.role_name from tb_user,tb_role where tb_user.role_id=tb_role.role_id limit #{beginIndex},#{size}
+    </select>
+</mapper>

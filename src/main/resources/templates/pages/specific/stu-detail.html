@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>学生详情</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="/assets/javascript/popup/popup.js"></script>
+    <script src="/assets/javascript/popup/orderpopup.js"></script>
+            <link rel="stylesheet" type="text/css" href="/assets/styles/specific/order-detail.css"/>
+            </head>
+            <body style="overflow-x:hidden;">
+            <div class="container" style="top: -380px;">
+                    <div class="main-body">
+                        <div class="main-content1">
+                            <div class="title-content">
+                            <div class="title"><text>详细信息</text></div>
+                            <div class="title-content">
+                                <div class="title-content1">
+                                    <div class="title-content1-top1">姓名：<input disabled="disabled" th:value="${stuDetail.name}"></div>
+                                    <div class="title-content1-top2">学号：<input disabled="disabled"  th:value="${stuDetail.stuId}"></div>
+                                    <div class="title-content1-top3">年级：<input disabled="disabled" th:value="${stuDetail.grade}"></div>
+                                </div>
+                                <div class="title-content2">
+                                    <div class="title-content1-top1">学院：<input disabled="disabled"  th:value="${stuDetail.college}"></div>
+                                    <div class="title-content1-top2">班级：<input disabled="disabled"  th:value="${stuDetail.classes}"></div>
+                                    <div class="title-content1-top3">专业：<input disabled="disabled"  th:value="${stuDetail.major}"></div>
+                                </div>
+                                <div class="title-content3">
+                                    <div class="title-content1-top1">名族：<input disabled="disabled"  th:value="${stuDetail.famousRace}"></div>
+                                    <div class="title-content1-top2">地址：<input disabled="disabled"  th:value="${stuDetail.adress}"></div>
+                                    <div class="title-content1-top3">学校：<input disabled="disabled"  th:value="${stuDetail.school}"></div>
+                                </div>
+                                <div class="title-content3">
+                                    <div class="title-content1-top1">之前学校：<input disabled="disabled" th:value="${stuDetail.beforeSchool}"></div>
+                                    <div class="title-content1-top1">入学时间：<input disabled="disabled" th:value="${stuDetail.admissionTime}"></div>
+                                    <div class="title-content1-top1">身份证号：<input disabled="disabled" th:value="${stuDetail.numberId}"></div>
+                                </div>
+                                <div class="title-content3">
+                                    <div class="title-content1-top1">学籍状态：<input disabled="disabled" th:value="${stuDetail.stuStatus}"></div>
+                                    <div class="title-content1-top1">出生日期：<input disabled="disabled" th:value="${stuDetail.birth}"></div>
+                                </div>
+                                <div class="title-content3">
+                                    <div class="title-content1-top1">是否转校生：<input disabled="disabled" th:value="${stuDetail.stuTransfer}"></div>
+                                    <div class="title-content1-top1">手机号：<input disabled="disabled" th:value="${stuDetail.phoneNumber}"></div>
+                                    <div class="title-content1-top1">邮件：<input disabled="disabled" th:value="${stuDetail.email}"></div>
+                                </div>
+                                <div class="title-content3">
+                                    <div class="title-content1-top1">性别：<input disabled="disabled" th:value="${stuDetail.gender}"></div>
+                                    <div class="title-content1-top1">学历：<input disabled="disabled" th:value="${stuDetail.education}"></div>
+                                    <div class="title-content1-top1">政治面貌：<input disabled="disabled" th:value="${stuDetail.identity}"></div>
+                                </div>
+                                <div class="title-content3">
+                                    <div class="title-content1-top1">英语等级：<input disabled="disabled" th:value="${stuDetail.englishLevel}"></div>
+                                    <div class="title-content1-top1">计算机等级：<input disabled="disabled" th:value="${stuDetail.computerLevel}"></div>
+                                    <div class="title-content1-top1">父亲名：<input disabled="disabled" th:value="${stuDetail.fatherName}"></div>
+                                </div>
+                                <div class="title-content3">
+                                    <div class="title-content1-top1">母亲名：<input disabled="disabled" th:value="${stuDetail.motherName}"></div>
+                                    <div class="title-content1-top1">母亲手机号：<input disabled="disabled" th:value="${stuDetail.motherPhone}"></div>
+                                    <div class="title-content1-top1">父亲手机号：<input disabled="disabled" th:value="${stuDetail.fatherPhone}"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+        </div>
+</body>
+
+<script type="text/javascript" src="/page/js/receiver.js"></script>
+
+</html>

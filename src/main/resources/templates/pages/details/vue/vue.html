@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible"  charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="app">
+    <!--<input type="text" v-model="message">-->
+    <!--{{message}}-->
+<ul>
+        <my-component-li v-for="item in items" v-bind:item2="item"></my-component-li>
+</ul>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script type="text/javascript">
+    Vue.component("my-component-li",{
+        props:['item2'],
+       template:"<li>{{item2}}</li>"
+    });
+
+    var vm = new Vue({
+        el:'#app',
+        data:{
+            items:['1111','2222','33333'],
+            // message:"1111111"
+        }
+    });
+</script>
+</body>
+</html>

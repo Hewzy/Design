@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>金陵科技学院学籍信息管理系统</title>
+    <link rel="stylesheet" type="text/css" href="/assets/styles/registerLoading/loading.css">
+    <script type="text/javascript" src="/assets/javascript/jquery-2.1.1.min.js"></script>
+</head>
+<body>
+<div id="loginPage">
+    <!-- 网易登陆页面的最上面的部分 -->
+    <div class="header">
+        <!-- 左边部分 -->
+        <div class="header-left">
+            <a href="javascript:void(0)" title="" class="header-01">
+                <img src="/assets/images/registerLoading/school.png" alt="*">
+            </a>
+            <div class="header-left-01"></div>
+            <div class="header-left-02">学籍信息管理系统</div>
+        </div>
+        <!-- 右边部分 -->
+        <div class="header-right">
+            <a href="javascript:void(0)" title="*">企业邮箱</a>
+            <a href="javascript:void(0)" title="*">VIP邮箱</a>
+            <a href="javascript:void(0)" title="*">国外用户登陆</a>
+            <a href="javascript:void(0)" title="*">手机版</a>
+            <a href="javascript:void(0)" title="*">电脑版</a>
+            <a href="javascript:void(0)" title="*">帮助</a>
+            <a href="javascript:void(0)" title="*">私人问题</a>
+            <a href="javascript:void(0)" title="*">常见问题</a>
+            <a href="javascript:void(0)" title="*">登陆问题</a>
+        </div>
+    </div>
+    <!-- 网易登陆页面的中间的部分 -->
+    <!-- 登陆部分 -->
+    <div class="main" style="background:url(/assets/images/registerLoading/school2.png) no-repeat; background-size: 100%;">
+        <div class="main-inner">
+            <div class="box">
+                <div class="box-top">
+                    快速登陆
+                </div>
+                <div class="box-middle">
+                    <p class="address"><input type="text" class="table1" name="biao1" id="email-001" placeholder="请输入用户名称"
+                            style="outline:none;" autocomplete="on" v-model.trim="tb_name">
+                        <p class="password"><input type="password" class="table2" placeholder="请输入密码" id="password-001"
+                                style="outline:none;" v-model.trim="tb_password"></p>
+                        <div class="freeload">
+                            <select id="sel" display="none" v-model="roleId">
+                                <option v-for="option in options" :value="option.roleId">
+                                    {{ option.roleName }}
+                                </option>
+                            </select>
+                            <!--<a href="javascript:void(0)" title="*" class="forget"> 忘记密码？</a>-->
+                        </div>
+                        <button type="button" class="load-02"  @click="doLogin">登&nbsp&nbsp录</button>
+                        <!--<div class="insert-01"><a target="_blank" href="registerOrder.html" title="注册页面">注&nbsp&nbsp册</a></div>-->
+                        <div class="book1">你&nbsp的&nbsp青&nbsp春&nbsp不&nbsp该&nbsp只&nbsp有&nbsp书&nbsp籍<br>也&nbsp不&nbsp该&nbsp只&nbsp有&nbsp游&nbsp戏</div>
+                </div>
+                <div class="box-bottom">
+                    <a href="javascript:void(0)" title="*" class="box-bottom-01">欢迎你回来</a><br>
+                    <a href="javascript:void(0)" title="*" class="box-bottom-02">金陵科技提醒你不要浪费时间</a>
+                </div>
+            </div>
+            <div class="main-bottom">
+                <div class="main-bottom-01"><a href="javascript:void(0);" rel="external nofollow" id="left">
+                        <</a> </div> <div class="main-bottom-02"><a href="javascript:void(0);" rel="external nofollow"
+                                id="right">></a></div>
+            </div>
+        </div>
+    </div>
+    <!-- 网易登陆页面的最下面的部分 -->
+    <div class="footer">
+        <div class="footer-left"><a><img src="/assets/images/registerLoading/school.png" alt="*"></a></div>
+        <div class="footer-right-top"><a href="javascript:void(0)" title="*">企业邮箱</a>
+            <a href="javascript:void(0)" title="*" class="footer-right-top-01">金陵首页</a>
+            <a href="javascript:void(0)" title="*">国外用户登录</a>
+            <a href="javascript:void(0)" title="*">金陵黄页</a>
+            <a href="javascript:void(0)" title="*">金陵制造</a>
+            <a href="javascript:void(0)" title="*">金陵.有钱</a>
+            <a href="javascript:void(0)" title="*">金陵严选</a>
+            <a href="javascript:void(0)" title="*">金陵一起拼</a>
+            <a href="javascript:void(0)" title="*">政府公益热线</a> </div>
+        <div class="footer-right-bottom">
+            <a href="javascript:void(0)" title="*" class="footer-right-bottom-01">公司版权所有©1997-2018</a>
+            <a href="javascript:void(0)" title="*">ICP证粤B2-20090191</a>
+            <a href="javascript:void(0)" title="*">粤公网安备 44010602000311</a>
+            <span style=" color:#ccc">（数据来源：艾媒金陵报告）</span>
+        </div>
+    </div>
+</div>
+    <script type="text/javascript" src="/assets/javascript/registerLoading/loading.js"></script>
+</body>
+<script src="/commons/plugins/iview/js/vue.min.js"></script>
+<script src="/commons/plugins/iview/js/vue-router.js"></script>
+<script type="text/javascript" src="/commons/plugins/iview/js/axios.min.js"></script>
+<script type="text/javascript" src="/commons/js/axiosUtils.js"></script>
+<script type="text/javascript" src="/page/js/login.js"></script>
+</html>

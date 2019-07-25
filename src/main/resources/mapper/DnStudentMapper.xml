@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cn.jk.mapper.StudentMapper">
+  <resultMap id="BaseResultMap" type="com.cn.jk.entity.student">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="stu_id" jdbcType="INTEGER" property="stuId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="grade" jdbcType="VARCHAR" property="grade" />
+    <result column="classes" jdbcType="VARCHAR" property="classes" />
+    <result column="college" jdbcType="VARCHAR" property="college" />
+    <result column="famous_race" jdbcType="VARCHAR" property="famousRace" />
+    <result column="adress" jdbcType="VARCHAR" property="adress" />
+    <result column="major" jdbcType="VARCHAR" property="major" />
+    <result column="school" jdbcType="VARCHAR" property="school" />
+    <result column="before_school" jdbcType="VARCHAR" property="beforeSchool" />
+    <result column="admission_time" jdbcType="TIMESTAMP" property="admissionTime" />
+    <result column="stu_status" jdbcType="VARCHAR" property="stuStatus" />
+    <result column="birth" jdbcType="VARCHAR" property="birth" />
+    <result column="stu_transfer" jdbcType="VARCHAR" property="stuTransfer" />
+    <result column="phone_number" jdbcType="VARCHAR" property="phoneNumber" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="gender" jdbcType="VARCHAR" property="gender" />
+    <result column="education" jdbcType="VARCHAR" property="education" />
+    <result column="identity" jdbcType="VARCHAR" property="identity" />
+    <result column="english_level" jdbcType="VARCHAR" property="englishLevel" />
+    <result column="computer_level" jdbcType="VARCHAR" property="computerLevel" />
+    <result column="father_name" jdbcType="VARCHAR" property="fatherName" />
+    <result column="mother_name" jdbcType="VARCHAR" property="motherName" />
+    <result column="father_phone" jdbcType="VARCHAR" property="fatherPhone" />
+    <result column="mother_phone" jdbcType="VARCHAR" property="motherPhone" />
+    <result column="number_id" jdbcType="LONGVARCHAR" property="numberId" />
+  </resultMap>
+  <select id="findAllStu" resultMap="BaseResultMap">
+    SELECT * from student
+      <if test="stuId !=null and stuId != ''">
+        WHERE stu_id like CONCAT('%',#{stuId},'%')
+      </if>
+      <if test="college!=null and college != ''">
+        WHERE college like CONCAT('%',#{college},'%')
+      </if>
+      <if test="major !=null and major != ''">
+        WHERE major like CONCAT('%',#{major},'%')
+      </if>
+      <if test="classes !=null and classes != ''">
+        WHERE classes like CONCAT('%',#{classes},'%')
+      </if>
+    order by grade
+  </select>
+  <select id="findTransferStu" resultType="com.cn.jk.entity.student">
+    SELECT * from student where stu_transfer = #{transfer}
+    <if test="stuId != null and stuId != ''">
+      and stu_id like CONCAT('%',#{stuId},'%')
+    </if>
+    <if test="college != null and college != ''">
+      and college like CONCAT('%',#{college},'%')
+    </if>
+    <if test="major != null and major !=''">
+      and major like CONCAT('%',#{major},'%')
+    </if>
+    <if test="classes != null and classes !=''">
+      and classes like CONCAT('%',#{classes},'%')
+    </if>
+    order by grade
+  </select>
+  <select id="findLeaveStu" resultType="com.cn.jk.entity.student">
+    SELECT * from student where stu_status = #{stuStatus}
+    <if test="stuId != null and stuId != ''">
+      and stu_id like CONCAT('%',#{stuId},'%')
+    </if>
+    <if test="college != null and college != ''">
+      and college like CONCAT('%',#{college},'%')
+    </if>
+    <if test="major != null and major !=''">
+      and major like CONCAT('%',#{major},'%')
+    </if>
+    <if test="classes != null and classes !=''">
+      and classes like CONCAT('%',#{classes},'%')
+    </if>
+    order by grade
+  </select>
+  <select id="stuList" resultType="com.cn.jk.entity.student">
+        select * FROM student where grade = #{grade}
+    </select>
+  <select id="getStuDetailById" resultType="com.cn.jk.entity.student">
+        select * FROM student where stu_id = #{stuId}
+    </select>
+    <select id="findPower" resultType="java.lang.Integer">
+      select permission_id from tb_role_permission where role_id = #{roleId}
+    </select>
+  <delete id="deleteStu">
+    delete from student where stu_id = #{stuId}
+  </delete>
+  <insert id="addStu">
+      insert into student(name
+        stu_id,
+        grade,
+        classes,
+        college,
+        famous_race,
+        adress,
+        major,
+        school,
+        before_school,
+        number_id,
+        admission_time,
+        stu_status,
+        birth,
+        stu_transfer,
+        phone_number,
+        email,
+        gender,
+        education,
+        identity,
+        english_level,
+        computer_level,
+        father_name,
+        mother_name,
+        father_phone,
+        mother_phone,
+        password
+        )
+        values (
+        #{stu.name},
+        #{stu.stu_id},
+        #{stu.grade},
+        #{stu.classes},
+        #{stu.college},
+        #{stu.famous_race},
+        #{stu.adress},
+        #{stu.major},
+        #{stu.school},
+        #{stu.before_school},
+        #{stu.number_id},
+        #{stu.admission_time},
+        #{stu.stu_status},
+        #{stu.birth},
+        #{stu.stu_transfer},
+        #{stu.phone_number},
+        #{stu.email},
+        #{stu.gender},
+        #{stu.education},
+        #{stu.identity},
+        #{stu.english_level},
+        #{stu.computer_level},
+        #{stu.father_name},
+        #{stu.mother_name},
+        #{stu.father_phone},
+        #{stu.mother_phone},
+        #{stu.password}
+        )
+    </insert>
+</mapper>
